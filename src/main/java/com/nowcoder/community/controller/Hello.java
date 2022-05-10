@@ -13,6 +13,6 @@ public class Hello {
 
     @RequestMapping("/")
     public String hello(){
-        return "success";
+        return "index";
     }
 }
