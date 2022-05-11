@@ -28,6 +28,7 @@ public class MapperTest {
         System.out.println(userMapper.selectById(101));
         System.out.println(userMapper.selectByName("liubei"));
         System.out.println(userMapper.selectByEmail("nowcoder101@sina.com"));
+
     }
 
     @Test
