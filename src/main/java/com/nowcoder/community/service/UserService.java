@@ -174,6 +174,15 @@ public class UserService implements CommunityConstant {
         loginTicketMapper.updateStatus(ticket, 1);
     }
 
+    public LoginTicket findLoginTicket(String ticket) {
+        return loginTicketMapper.selectByTicket(ticket);
+    }
+
+    //更新头像
+    public int updateHeader(int userId, String headerUrl) {
+        return userMapper.updateHeader(userId, headerUrl);
+    }
+
     //重置密码
     public Map<String, Object> resetPassword(String email, String password) {
         Map<String, Object> map = new HashMap<>();
@@ -190,15 +199,43 @@ public class UserService implements CommunityConstant {
 
         //验证邮箱
         User user = userMapper.selectByEmail(email);
-        if(user == null){
-            map.put("emailMsg","该邮箱尚未注册！");
+        if (user == null) {
+            map.put("emailMsg", "该邮箱尚未注册！");
             return map;
         }
 
         //重置密码
         password = CommunityUtils.md5(password + user.getSalt());
-        userMapper.updatePassword(user.getId(),password);
-        map.put("user",user);
+        userMapper.updatePassword(user.getId(), password);
+        map.put("user", user);
+        return map;
+    }
+
+    //修改密码
+    public Map<String, Object> updatePassword(int userId, String oldPassword, String newPassword) {
+        Map<String, Object> map = new HashMap<>();
+
+        //空值处理
+        if (StringUtils.isBlank(oldPassword)) {
+            map.put("oldPasswordMsg", "原密码不能为空！");
+            return map;
+        }
+        if (StringUtils.isBlank(newPassword)) {
+            map.put("newPasswordMsg", "新密码不能为空！");
+            return map;
+        }
+
+        //验证原始密码
+        User user = userMapper.selectById(userId);
+        oldPassword = CommunityUtils.md5(oldPassword + user.getSalt());
+        if(!user.getPassword().equals(oldPassword)){
+            map.put("oldPasswordMsg", "原密码输入有误！");
+            return map;
+        }
+
+        //更新密码
+        newPassword = CommunityUtils.md5(newPassword + user.getSalt());
+        userMapper.updatePassword(userId,newPassword);
         return map;
     }
 }

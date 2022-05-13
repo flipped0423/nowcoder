@@ -187,7 +187,7 @@ public class LoginController implements CommunityConstant {
 
         Map<String, Object> map = userService.resetPassword(email, password);
         if (map.containsKey("user")) {
-            model.addAttribute("msg", "修改密码成功，请重新登录");
+            model.addAttribute("msg", "重置密码成功，请重新登录");
             model.addAttribute("target", "/login");
             return "/site/operate-result";
         } else {
@@ -196,5 +196,6 @@ public class LoginController implements CommunityConstant {
             return "/site/forget";
         }
     }
+
 
 }
