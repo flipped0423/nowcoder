@@ -54,4 +54,12 @@ public class MapperTest {
         //loginTicketMapper.insertLoginTicket(new LoginTicket(null,11,"车票",1,new Date()));
         loginTicketMapper.updateStatus("车票", 0);
     }
+
+    @Test
+    public void testInsertDiscussPost(){
+        DiscussPost discussPost = new DiscussPost(null,159,"暑期实习",
+                "今年暑期实习好难", 0,1,new Date(), 123,10.0);
+        discussPostMapper.insertDiscussPost(discussPost);
+
+    }
 }
