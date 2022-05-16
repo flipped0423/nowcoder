@@ -2,9 +2,11 @@ package com.nowcoder.community;
 
 import com.nowcoder.community.dao.DiscussPostMapper;
 import com.nowcoder.community.dao.LoginTicketMapper;
+import com.nowcoder.community.dao.MessageMapper;
 import com.nowcoder.community.dao.UserMapper;
 import com.nowcoder.community.entity.DiscussPost;
 import com.nowcoder.community.entity.LoginTicket;
+import com.nowcoder.community.entity.Message;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,6 +30,9 @@ public class MapperTest {
 
     @Autowired
     private LoginTicketMapper loginTicketMapper;
+
+    @Autowired
+    private MessageMapper messageMapper;
 
     @Test
     public void testUserMapper(){
@@ -61,5 +66,37 @@ public class MapperTest {
                 "今年暑期实习好难", 0,1,new Date(), 123,10.0);
         discussPostMapper.insertDiscussPost(discussPost);
 
+    }
+
+//    //查询当前用户的会话列表，针对每个会话只返回（显示）一条最新的私信
+//    List<Message> selectConversations(int userId, int offset, int limit);
+//
+//    //查询当前用户的会话数量
+//    int selectConversationCount(int userId);
+//
+//    //查询每个会话所包含的私信列表
+//    List<Message> selectLetters(String conversationId, int offset, int limit);
+//
+//    //查询某个会话所包含的私信数量
+//    int selectLetterCount(String conversationId);
+//
+//    //查询未读私信的数量（包括所有未读的私信和每个会话未读的私信）
+//    int selectLetterUnreadCount(int userId, String conversationId);
+
+    @Test
+    public void testSelectConversations(){
+        List<Message> messages = messageMapper.selectConversations(111, 0, 20);
+        for (Message message : messages) {
+            System.out.println(message);
+        }
+        int count = messageMapper.selectConversationCount(111);
+        System.out.println(count);
+
+        List<Message> messageList = messageMapper.selectLetters("111_112", 0, 10);
+        for (Message message : messageList) {
+            System.out.println(message);
+        }
+        System.out.println(messageMapper.selectLetterCount("111_112"));
+        System.out.println(messageMapper.selectLetterUnreadCount(131,null));
     }
 }
