@@ -5,6 +5,7 @@ import com.nowcoder.community.entity.Page;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.service.MessageService;
 import com.nowcoder.community.service.UserService;
+import com.nowcoder.community.utils.CommunityUtils;
 import com.nowcoder.community.utils.HostHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,11 +13,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author xindong
@@ -90,9 +89,40 @@ public class MessageController {
         model.addAttribute("letters", letters);
 
         //设置私信目标（来自**的私信，只能是别人）
-        model.addAttribute("target",getLetterTarget(conversationId));
+        model.addAttribute("target", getLetterTarget(conversationId));
+
+        //设置已读
+        List<Integer> ids = getUnreadLetterIds(letterList);
+        if (!ids.isEmpty()) {
+            messageService.readMessage(ids);
+        }
 
         return "/site/letter-detail";
+    }
+
+    @RequestMapping(path = "/letter/send", method = RequestMethod.POST)
+    @ResponseBody
+    public String sendLetter(String toName, String content) {
+        User target = userService.findUserByName(toName);
+        if (target == null) {
+            return CommunityUtils.getJSONString(1, "目标用户不存在！");
+        }
+
+        Message message = new Message();
+        message.setFromId(hostHolder.getUser().getId());
+        message.setToId(target.getId());
+        if (message.getFromId() < message.getToId()) {
+            message.setConversationId(message.getFromId() + "_" + message.getToId());
+        } else {
+            message.setConversationId(message.getToId() + "_" + message.getFromId());
+        }
+        message.setContent(content);
+        message.setCreateTime(new Date());
+        message.setStatus(0);
+        messageService.addMessage(message);
+        //消息发送异常以后统一处理
+
+        return CommunityUtils.getJSONString(0);
     }
 
     //设置私信目标
@@ -101,6 +131,24 @@ public class MessageController {
         int id0 = Integer.parseInt(ids[0]);
         int id1 = Integer.parseInt(ids[1]);
         return hostHolder.getUser().getId() == id0 ? userService.findUserById(id1) : userService.findUserById(id0);
+    }
+
+    //得到未读私信的id
+    private List<Integer> getUnreadLetterIds(List<Message> letterList) {
+        List<Integer> ids = new ArrayList<>();
+
+        if (letterList != null) {
+
+            for (Message message : letterList) {
+                User user = hostHolder.getUser();
+
+                //注意包装类的比较，比如Integer在-128 - 127之间返回值，除此之外返回地址，用==比较自然是false
+                if ((hostHolder.getUser().getId().equals(message.getToId())) && (message.getStatus() == 0)) {
+                    ids.add(message.getId());
+                }
+            }
+        }
+        return ids;
     }
 
 }

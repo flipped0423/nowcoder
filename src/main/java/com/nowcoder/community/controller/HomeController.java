@@ -30,7 +30,7 @@ public class HomeController {
     private DiscussPostService discussPostService;
 
     @RequestMapping(path = "/index", method = RequestMethod.GET)
-    public String getIndexPage(Model model,Page page) {
+    public String getIndexPage(Model model, Page page) {
         // 方法调用后,SpringMVC会自动实例化Model和Page,并将Page注入Model.
         // 所以,在thymeleaf中可以直接访问Page对象中的数据.
         page.setRows(discussPostService.findDiscussPostRows(0));
@@ -48,5 +48,11 @@ public class HomeController {
         }
         model.addAttribute("discussPosts", discussPosts);
         return "index";
+    }
+
+    //这里只配置了服务器错误（500），404错误由springboot自动配置，我们准备好页面就行
+    @RequestMapping(path = "/error", method = RequestMethod.GET)
+    public String getErrorPage() {
+        return "/error/500";
     }
 }

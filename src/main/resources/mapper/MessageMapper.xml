@@ -69,4 +69,19 @@
         </if>
     </select>
 
+    <!--    int insertMessage(Message message);-->
+    <insert id="insertMessage" keyProperty="id">
+        insert into message (<include refid="insertFields"></include>)
+        values(#{fromId},#{toId},#{conversationId},#{content},#{status},#{createTime})
+    </insert>
+
+    <!--    int updateStatus(List<Integer> ids, int status);-->
+    <update id="updateStatus" >
+        update message set status = #{status}
+        where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </update>
+
 </mapper>
