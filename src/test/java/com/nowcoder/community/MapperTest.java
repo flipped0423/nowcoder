@@ -1,9 +1,6 @@
 package com.nowcoder.community;
 
-import com.nowcoder.community.dao.DiscussPostMapper;
-import com.nowcoder.community.dao.LoginTicketMapper;
-import com.nowcoder.community.dao.MessageMapper;
-import com.nowcoder.community.dao.UserMapper;
+import com.nowcoder.community.dao.*;
 import com.nowcoder.community.entity.DiscussPost;
 import com.nowcoder.community.entity.LoginTicket;
 import com.nowcoder.community.entity.Message;
@@ -33,6 +30,9 @@ public class MapperTest {
 
     @Autowired
     private MessageMapper messageMapper;
+
+    @Autowired
+    private CommentMapper commentMapper;
 
     @Test
     public void testUserMapper(){
@@ -98,5 +98,11 @@ public class MapperTest {
         }
         System.out.println(messageMapper.selectLetterCount("111_112"));
         System.out.println(messageMapper.selectLetterUnreadCount(131,null));
+    }
+
+    @Test
+    public void testSelectCountByUser(){
+        System.out.println(2);
+        System.out.println(commentMapper.selectCountByUser(159));
     }
 }
