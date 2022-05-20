@@ -42,15 +42,30 @@ public class MessageService {
         return messageMapper.selectLetterUnreadCount(userId, conversationId);
     }
 
-    public int addMessage(Message message){
+    public int addMessage(Message message) {
         message.setContent(HtmlUtils.htmlEscape(message.getContent()));
         message.setContent(sensitiveFilter.filter(message.getContent()));
         return messageMapper.insertMessage(message);
     }
 
-    public int readMessage(List<Integer> ids){
+    public int readMessage(List<Integer> ids) {
         //status = 1 表示已读，0表示未读，2表示已删除
-        return messageMapper.updateStatus(ids,1);
+        return messageMapper.updateStatus(ids, 1);
     }
 
+    public Message findLatestNotice(int userId, String topic) {
+        return messageMapper.selectLatestNotice(userId, topic);
+    }
+
+    public int findNoticeCount(int userId, String topic) {
+        return messageMapper.selectNoticeCount(userId, topic);
+    }
+
+    public int findNoticeUnreadCount(int userId, String topic) {
+        return messageMapper.selectNoticeUnreadCount(userId, topic);
+    }
+
+    public List<Message> findNotices(int userId, String topic, int offset, int limit) {
+        return messageMapper.selectNotices(userId, topic, offset, limit);
+    }
 }

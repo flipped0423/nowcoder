@@ -1,8 +1,11 @@
 package com.nowcoder.community.controller;
 
 import com.nowcoder.community.annotation.LoginRequired;
+import com.nowcoder.community.entity.Event;
 import com.nowcoder.community.entity.User;
+import com.nowcoder.community.event.EventProducer;
 import com.nowcoder.community.service.LikeService;
+import com.nowcoder.community.utils.CommunityConstant;
 import com.nowcoder.community.utils.CommunityUtils;
 import com.nowcoder.community.utils.HostHolder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +22,7 @@ import java.util.Map;
  * @create 2022-05-18 10:08
  */
 @Controller
-public class LikeController {
+public class LikeController implements CommunityConstant {
 
     @Autowired
     private HostHolder hostHolder;
@@ -27,14 +30,16 @@ public class LikeController {
     @Autowired
     private LikeService likeService;
 
-    @LoginRequired
+    @Autowired
+    private EventProducer eventProducer;
+
     @RequestMapping(path = "/like", method = RequestMethod.POST)
     @ResponseBody
-    public String like(int entityType, int entityId, int entityUserId) {
+    public String like(int entityType, int entityId, int entityUserId, int postId) {
         User user = hostHolder.getUser();//暂时不判断空值，之后用spring security统一处理
 
         //点赞
-        likeService.like(user.getId(), entityType, entityId,entityUserId);
+        likeService.like(user.getId(), entityType, entityId, entityUserId);
 
         //数量
         long likeCount = likeService.findEntityLikeCount(entityType, entityId);
@@ -45,6 +50,18 @@ public class LikeController {
         Map<String, Object> map = new HashMap<>();
         map.put("likeCount", likeCount);
         map.put("likeStatus", likeStatus);
+
+        //触发点赞事件
+        if (likeStatus == 1) {
+            Event event = new Event()
+                    .setTopic(TOPIC_LIKE)
+                    .setUserId(hostHolder.getUser().getId())
+                    .setEntityType(entityType)
+                    .setEntityId(entityId)
+                    .setEntityUserId(entityUserId)
+                    .setData("postId", postId);
+            eventProducer.fireEvent(event);
+        }
 
         return CommunityUtils.getJSONString(0, null, map);
     }

@@ -26,23 +26,28 @@ public class ServiceLogAspect {
     private static final Logger logger = LoggerFactory.getLogger(ServiceLogAspect.class);
 
     @Pointcut("execution(* com.nowcoder.community.service.*.*(..))")
-    public void pointcut(){}
+    public void pointcut() {
+    }
 
     @Before("pointcut()")
-    public void before(JoinPoint joinPoint){
+    public void before(JoinPoint joinPoint) {
         // 日志格式：用户[1.2.3.4],在[xxx],访问了[com.nowcoder.community.service.xxx()].
         // 利用工具类获取到当前的request对象
-        ServletRequestAttributes attributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = attributes.getRequest();
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 
-        String ip = request.getRemoteHost();
-        String now = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        //如果不是controller调用service的话是拿不到attributes的(没有请求)，attributes==null，产生空指针异常
+        if (attributes != null) {
+            HttpServletRequest request = attributes.getRequest();
 
-        // 得到类名和方法名
-        String target = joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName();
+            String ip = request.getRemoteHost();
+            String now = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
-        // 格式化字符串加入日志
-        logger.info(String.format("用户[%s]，在[%s]，访问了[%s]。",ip,now,target));
+            // 得到类名和方法名
+            String target = joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName();
+
+            // 格式化字符串加入日志
+            logger.info(String.format("用户[%s]，在[%s]，访问了[%s]。", ip, now, target));
+        }
     }
 
 
