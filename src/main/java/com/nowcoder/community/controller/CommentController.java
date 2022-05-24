@@ -45,7 +45,7 @@ public class CommentController implements CommunityConstant {
         if (comment.getTargetId() == null) comment.setTargetId(0);
         commentService.addComment(comment);
 
-        //出发评论事件，系统通知
+        //触发评论事件，系统通知
         Event event = new Event()
                 .setTopic(TOPIC_COMMENT)
                 .setUserId(hostHolder.getUser().getId())
@@ -60,6 +60,17 @@ public class CommentController implements CommunityConstant {
             event.setEntityUserId(target.getUserId());
         }
         eventProducer.fireEvent(event);
+
+        //当对帖子评论时，本帖子的分数发生了变化，因此需要在ES中存储，触发事件
+        if(comment.getEntityType() == ENTITY_TYPE_POST){
+            event = new Event()
+                    .setTopic(TOPIC_PUBLISH)
+                    .setUserId(comment.getUserId())
+                    .setEntityType(ENTITY_TYPE_POST)
+                    .setEntityId(discussPostId);
+            eventProducer.fireEvent(event);
+        }
+
 
         return "redirect:/discuss/detail/" + discussPostId;
     }
