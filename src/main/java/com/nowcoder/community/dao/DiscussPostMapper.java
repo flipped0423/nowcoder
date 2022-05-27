@@ -31,4 +31,10 @@ public interface DiscussPostMapper {
     //更新帖子的回帖数
     int updateCommentCount(int id, int commentCount);
 
+    //更改帖子类型：普通、置顶
+    int updateType(int id, int type);
+
+    //更改帖子状态：正常、精华、删除
+    int updateStatus(int id, int status);
+
 }
