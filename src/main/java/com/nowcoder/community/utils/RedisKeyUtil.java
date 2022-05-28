@@ -1,8 +1,6 @@
 package com.nowcoder.community.utils;
 
 
-import org.apache.kafka.common.protocol.types.Field;
-
 /**
  * @author xindong
  * @create 2022-05-18 9:30
@@ -19,6 +17,7 @@ public class RedisKeyUtil {
     private static final String PREFIX_USER = "user"; //缓存用户
     private static final String PREFIX_UV = "uv"; //网站访问量：使用IP统计
     private static final String PREFIX_DAU = "dau"; //网站日活用户：使用userId统计
+    private static final String PREFIX_POST = "post"; //存放分数改变的帖子
 
     //在键上保留某个实体的信息
     //like:entity:entityType:entityId -> set(userId)（redis键值对）
@@ -77,5 +76,10 @@ public class RedisKeyUtil {
     //区间活跃用户
     public static String getDAUKey(String startDate, String endDate) {
         return PREFIX_DAU + SPLIT + startDate + SPLIT + endDate;
+    }
+
+    //帖子分数
+    public static String getPostScoreKey() {
+        return PREFIX_POST + SPLIT + "score";
     }
 }

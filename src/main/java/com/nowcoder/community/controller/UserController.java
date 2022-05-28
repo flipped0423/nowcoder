@@ -214,12 +214,12 @@ public class UserController implements CommunityConstant {
         model.addAttribute("user", user);
 
         //分页信息(默认limit=10)
-        page.setPath( "/user/mypost/" + userId);
+        page.setPath("/user/mypost/" + userId);
         page.setRows(discussPostService.findDiscussPostRows(userId));
 
         //帖子列表
         List<DiscussPost> discussPost = discussPostService
-                .findDiscussPosts(userId, page.getOffset(), page.getLimit());
+                .findDiscussPosts(userId, page.getOffset(), page.getLimit(), 0);
         List<Map<String, Object>> discussVOList = new ArrayList<>();
         if (discussPost != null) {
             for (DiscussPost post : discussPost) {
@@ -252,10 +252,10 @@ public class UserController implements CommunityConstant {
                 .findUserComments(userId, page.getOffset(), page.getLimit());
         List<Map<String, Object>> commentVOList = new ArrayList<>();
         if (commentList != null) {
-            for (Comment comment:commentList) {
+            for (Comment comment : commentList) {
                 Map<String, Object> map = new HashMap<>();
-                map.put("comment",comment);
-                DiscussPost post  = discussPostService.findDiscussPostById(comment.getEntityId());
+                map.put("comment", comment);
+                DiscussPost post = discussPostService.findDiscussPostById(comment.getEntityId());
                 map.put("discussPost", post);
                 commentVOList.add(map);
             }

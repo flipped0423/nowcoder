@@ -1,7 +1,6 @@
 package com.nowcoder.community.service;
 
 import com.nowcoder.community.utils.RedisKeyUtil;
-import org.elasticsearch.common.recycler.Recycler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;

@@ -15,8 +15,8 @@ import java.util.List;
 @Repository
 public interface DiscussPostMapper {
 
-    //当userId有效时，显示当前用户的评论，当无效时分页显示所有评论
-    List<DiscussPost> selectDiscussPosts(int userId, int offset, int limit);
+    //当userId有效时，显示当前用户的评论，当无效时分页显示所有评论，orderMode表示按照热度排，1为按照热度排
+    List<DiscussPost> selectDiscussPosts(int userId, int offset, int limit, int orderMode);
 
     //如果只有一个参数，并且在<if>里使用，则必须加别名(@Param)。
     //返回每个用户的评论条数
@@ -36,5 +36,8 @@ public interface DiscussPostMapper {
 
     //更改帖子状态：正常、精华、删除
     int updateStatus(int id, int status);
+
+    //更改帖子的分数
+    int updateScore(int id, double score);
 
 }

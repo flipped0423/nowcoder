@@ -64,7 +64,7 @@ public class ElasticsearchTests {
     //一次保存多条数据
     @Test
     public void testInsertList() {
-        discussRepository.saveAll(discussPostMapper.selectDiscussPosts(0, 0, 200));
+        discussRepository.saveAll(discussPostMapper.selectDiscussPosts(0, 0, 200,0));
     }
 
     //覆盖修改
